@@ -4,11 +4,15 @@ using System.Collections;
 public class Movement : MonoBehaviour {
 	public float speed = 0.5f;
 	public GameObject projectile;
+
 	private Vector3 inputVector;
 	private Motor theMotor;
+	private PlayerManager theManager;
+	private bool chargingWeapon;
 	// Use this for initialization
 	void Start () {
 		theMotor = gameObject.GetComponent<Motor>();
+		theManager = gameObject.GetComponent<PlayerManager>();
 	}
 	
 	// Update is called once per frame
@@ -29,7 +33,16 @@ public class Movement : MonoBehaviour {
 		}
 		if (Input.GetButtonDown("Fire1"))
 		{
-			Object theProjectile = Instantiate(projectile, transform.position, transform.rotation)as Object;
+			if(chargingWeapon)
+			{
+				GameObject theProjectile = Instantiate(projectile, transform.position, transform.rotation)as GameObject;
+				theProjectile.GetComponent<missleBehaviour>().chargeLevel = theManager.getChargeLevel();
+				theManager.setCharging(false);
+				chargingWeapon = false;
+			} else {
+				theManager.setCharging(true);
+				chargingWeapon = true;
+			}
 		}
 	}
 }
